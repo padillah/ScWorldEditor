@@ -32,10 +32,20 @@ namespace SCWorldEdit
 
 			if (fileResult)
 			{
-
+				//TODO: Open the zip file.
+				//TODO: Save the three files in a subfolder
+				//TODO: Open the "Chunks.dat" file.
+				//TODO: Fill ScWorld class.
 			}
 
 		}
 
+	}
+	
+	//TODO: Create an ScWorld class
+	//class ScWorld
+	//{
+		//Take a look at ChunkHelper and see if that is any use.
+	//}
 	}
 }
