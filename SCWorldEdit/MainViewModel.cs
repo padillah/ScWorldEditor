@@ -17,7 +17,7 @@ namespace SCWorldEdit
 
 		public Action CloseAction { get; set; }
 
-		MainViewModel()
+		public MainViewModel()
 		{
 			ClosingCommand = new RelayCommand(CloseAction);
 			FileOpenCommand = new RelayCommand(FileOpen);
@@ -25,15 +25,14 @@ namespace SCWorldEdit
 
 		private void FileOpen()
 		{
-			IOpenFileDialog localOpenDialog = Locator.Resolve<IOpenFileDialog>();
+			IOpenFileDialog localOpenDialog = new OpenFileDialogViewModel();
 			IDialogService localDialogService = Locator.Resolve<IDialogService>();
-
-
+			
 			bool fileResult = localDialogService.ShowOpenFileDialog(this, localOpenDialog);
 
 			if (fileResult)
 			{
-				
+
 			}
 
 		}
