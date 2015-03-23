@@ -1,13 +1,11 @@
-﻿<RibbonWindow x:Class="SCWorldEdit.MainView"
+﻿<Window x:Class="SCWorldEdit.MainView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainView" Height="650" Width="925" DataContextChanged="RibbonWindow_DataContextChanged">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1*"/>
-        </Grid.RowDefinitions>
-        
+        xmlns:service="clr-namespace:DialogServiceLibrary.Service;assembly=DialogServiceLibrary"
+        Title="MainView" Height="650" Width="925" DataContextChanged="RibbonWindow_DataContextChanged"
+		service:DialogService.CanOpenWindows="true">
+    <StackPanel>
+		
         <Menu>
             <MenuItem Header="File">
                 <MenuItem Header="Open..." Command="{Binding FileOpenCommand}"/>
@@ -15,7 +13,7 @@
             </MenuItem>
         </Menu>
 
-        <Grid Grid.Row="1">
+        <Grid >
             <Grid.RowDefinitions>
                 <RowDefinition Height="6"/>
                 <RowDefinition/>
@@ -26,7 +24,8 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="6"/>
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1" Grid.Row="1">
+            
+			<Grid Grid.Column="1" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="6"/>
@@ -46,5 +45,5 @@
 
         </Grid>
 
-    </Grid>
-</RibbonWindow>
+    </StackPanel>
+</Window>

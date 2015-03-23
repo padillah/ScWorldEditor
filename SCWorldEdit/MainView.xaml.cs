@@ -19,7 +19,7 @@ namespace SCWorldEdit
     /// <summary>
     /// Interaction logic for MainView.xaml
     /// </summary>
-    public partial class MainView : RibbonWindow
+    public partial class MainView : Window
     {
         public MainView()
         {
