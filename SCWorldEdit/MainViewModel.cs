@@ -47,5 +47,5 @@ namespace SCWorldEdit
 	//{
 		//Take a look at ChunkHelper and see if that is any use.
 	//}
-	}
+	
 }
