@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 
 namespace SCWorldEdit.Rules
@@ -14,7 +15,7 @@ namespace SCWorldEdit.Rules
 			DirectoryEntries = new List<DirectoryEntry>();
 		}
 
-		public void AddDirectoryEntry(int argChunkX, int argChunkY, int argOffset)
+		public void AddDirectoryEntry(Int32 argChunkX, Int32 argChunkY, Int32 argOffset)
 		{
 			DirectoryEntries.Add(new DirectoryEntry(argChunkX,argChunkY,argOffset));
 		}
@@ -22,9 +23,23 @@ namespace SCWorldEdit.Rules
 
 	public class DirectoryEntry
 	{
-		public int ChunkX { get; private set; }
-		public int ChunkY { get; private set; }
-		public int Offset { get; private set; }
+		private Chunk _chunk;
+		public Int32 ChunkX { get; private set; }
+		public Int32 ChunkY { get; private set; }
+		public Int32 Offset { get; private set; }
+
+		public Chunk Chunk
+		{
+			get
+			{
+				if (_chunk == null)
+				{
+					_chunk = new Chunk();
+				}
+				return _chunk;
+			}
+			set { _chunk = value; }
+		}
 
 		public DirectoryEntry(int argChunkX, int argChunkY, int argOffset)
 		{
@@ -32,5 +47,10 @@ namespace SCWorldEdit.Rules
 			ChunkY = argChunkY;
 			Offset = argOffset;
 		}
+	}
+
+	public class Chunk
+	{
+		
 	}
 }
