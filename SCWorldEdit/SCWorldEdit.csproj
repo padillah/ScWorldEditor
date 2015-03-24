@@ -66,6 +66,8 @@
     <Compile Include="Assets\RelayCommand.cs" />
     <Compile Include="Assets\UtilityCode.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Rules\ScRulesEngine.cs" />
+    <Compile Include="Rules\ScWorld.cs" />
     <Compile Include="UserControls\ScLayer\ScLayerView.xaml.cs">
       <DependentUpon>ScLayerView.xaml</DependentUpon>
     </Compile>
@@ -117,6 +119,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Framework\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpZipLib\ICSharpCode.SharpZLib.csproj">
+      <Project>{0e7413ff-eb9e-4714-acf2-be3a6a7b2ffd}</Project>
+      <Name>ICSharpCode.SharpZLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

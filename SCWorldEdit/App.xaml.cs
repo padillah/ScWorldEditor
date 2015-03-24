@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using DialogServiceLibrary.Service;
+using SCWorldEdit.Rules;
 using SCWorldEdit.WindowViewModelMapping;
 using ServiceLocator;
 using ServiceLocator.WindowViewModelMapping;
@@ -25,9 +26,9 @@ namespace SCWorldEdit
             base.OnStartup(e);
 
             Locator.RegisterSingleton<IWindowViewModelMappings, ScWorldEditMapping>();
-            Locator.RegisterSingleton<IDialogService, DialogService>();
+			Locator.RegisterSingleton<IDialogService, DialogService>();
 
-            //Locator.RegisterSingleton<IPartyTrackerBusinessRules, PartyTrackerBusinessRules>();
+			Locator.Register<IScRulesEngine, ScRulesEngine>();
 
             _mainViewModel = new MainViewModel();
             MainView view = new MainView();

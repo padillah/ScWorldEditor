@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DialogServiceLibrary.Service;
 using DialogServiceLibrary.Service.FrameworkDialogs.OpenFile;
 using SCWorldEdit.Assets;
+using SCWorldEdit.Rules;
 using ServiceLocator;
 
 namespace SCWorldEdit
@@ -32,10 +33,9 @@ namespace SCWorldEdit
 
 			if (fileResult)
 			{
-				//TODO: Open the zip file.
-				//TODO: Save the three files in a subfolder
-				//TODO: Open the "Chunks.dat" file.
-				//TODO: Fill ScWorld class.
+				IScRulesEngine localRules = Locator.Resolve<IScRulesEngine>();
+
+				localRules.LoadWorld(localOpenDialog.FileName);
 			}
 
 		}
