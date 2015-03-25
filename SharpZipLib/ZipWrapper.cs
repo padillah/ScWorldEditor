@@ -17,6 +17,7 @@ namespace ICSharpCode.SharpZipLib
 			{
 				FileStream fs = File.OpenRead(archiveFilenameIn);
 				zf = new ZipFile(fs);
+				zf.UseZip64 = UseZip64.Off;
 
 				//if (!String.IsNullOrEmpty(password))
 				//{
