@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib;
 
+//TODO: World should be Image 768x768 (256 * 3)
+
 namespace SCWorldEdit.Rules
 {
 	public interface IScRulesEngine
