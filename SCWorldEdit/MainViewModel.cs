@@ -13,6 +13,8 @@ namespace SCWorldEdit
 {
 	public class MainViewModel
 	{
+		private ScWorld _currentWorld;
+
 		public RelayCommand ClosingCommand { get; set; }
 		public RelayCommand FileOpenCommand { get; set; }
 
@@ -28,24 +30,24 @@ namespace SCWorldEdit
 		{
 			IOpenFileDialog localOpenDialog = new OpenFileDialogViewModel();
 			IDialogService localDialogService = Locator.Resolve<IDialogService>();
-			
+
 			bool fileResult = localDialogService.ShowOpenFileDialog(this, localOpenDialog);
 
 			if (fileResult)
 			{
 				IScRulesEngine localRules = Locator.Resolve<IScRulesEngine>();
 
-				localRules.LoadWorld(localOpenDialog.FileName);
+				_currentWorld = localRules.LoadWorld(localOpenDialog.FileName);
 			}
 
 		}
 
 	}
-	
+
 	//TODO: Create an ScWorld class
 	//class ScWorld
 	//{
-		//Take a look at ChunkHelper and see if that is any use.
+	//Take a look at ChunkHelper and see if that is any use.
 	//}
-	
+
 }
