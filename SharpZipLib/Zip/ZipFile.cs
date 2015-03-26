@@ -1079,10 +1079,12 @@ namespace ICSharpCode.SharpZipLib.Zip
 							throw new ZipException("Compression method not supported");
 						}
 
-						if ( (extractVersion > ZipConstants.VersionMadeBy)
-							|| ((extractVersion > 20) && (extractVersion < ZipConstants.VersionZip64)) ) {
-							throw new ZipException(string.Format("Version required to extract this entry not supported ({0})", extractVersion));
-						}
+						//HTP ** This is removed because the zip utilities on mobile devices do not put the correct Extract Version ** HTP
+						//if ( (extractVersion > ZipConstants.VersionMadeBy)
+						//	|| ((extractVersion > 20) && (extractVersion < ZipConstants.VersionZip64)) ) {
+						//	throw new ZipException(string.Format("Version required to extract this entry not supported ({0})", extractVersion));
+						//}
+						//HTP ** This is removed because the zip utilities on mobile devices do not put the correct Extract Version ** HTP
 
 						if ( (localFlags & ( int )(GeneralBitFlags.Patched | GeneralBitFlags.StrongEncryption | GeneralBitFlags.EnhancedCompress | GeneralBitFlags.HeaderMasked)) != 0 ) {
 							throw new ZipException("The library does not support the zip version required to extract this entry");
