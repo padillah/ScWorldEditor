@@ -41,6 +41,9 @@
                     </Grid.RowDefinitions>
                 </Grid>
 
+				<ScrollViewer Grid.Column="0" Grid.Row="0">
+					<Image Source="{Binding CurrentWorld.WorldImage}"></Image>
+				</ScrollViewer>
             </Grid>
 
         </Grid>

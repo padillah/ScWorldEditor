@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using DialogServiceLibrary.Service;
 using DialogServiceLibrary.Service.FrameworkDialogs.OpenFile;
+using SCWorldEdit.Annotations;
 using SCWorldEdit.Assets;
 using SCWorldEdit.Rules;
 using ServiceLocator;
 
 namespace SCWorldEdit
 {
-	public class MainViewModel
+	public class MainViewModel:INotifyPropertyChanged
 	{
-		private ScWorld _currentWorld;
+		public ScWorld CurrentWorld { get; set; }
 
 		public RelayCommand ClosingCommand { get; set; }
 		public RelayCommand FileOpenCommand { get; set; }
@@ -37,11 +40,21 @@ namespace SCWorldEdit
 			{
 				IScRulesEngine localRules = Locator.Resolve<IScRulesEngine>();
 
-				_currentWorld = localRules.LoadWorld(localOpenDialog.FileName);
+				CurrentWorld = localRules.LoadWorld(localOpenDialog.FileName);
 			}
+
+			OnPropertyChanged("CurrentWorld");
 
 		}
 
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string argPropertyName = null)
+		{
+			var handler = PropertyChanged;
+			if (handler != null) handler(this, new PropertyChangedEventArgs(argPropertyName));
+		}
 	}
 
 	//TODO: Create an ScWorld class
