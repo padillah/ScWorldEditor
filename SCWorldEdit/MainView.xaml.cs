@@ -16,15 +16,15 @@ using System.Windows.Shapes;
 
 namespace SCWorldEdit
 {
-    /// <summary>
-    /// Interaction logic for MainView.xaml
-    /// </summary>
-    public partial class MainView : Window
-    {
-        public MainView()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for MainView.xaml
+	/// </summary>
+	public partial class MainView : Window
+	{
+		public MainView()
+		{
+			InitializeComponent();
+		}
 
 		private void RibbonWindow_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
@@ -35,5 +35,12 @@ namespace SCWorldEdit
 				localVM.CloseAction = Close;
 			}
 		}
-    }
+
+		private void Image_OnMouseDown(object argSender, MouseButtonEventArgs argE)
+		{
+			//Get Position gives streched position need to divide by two (for the strech)
+			var currentPoint = argE.GetPosition(WorldImage);
+			Console.WriteLine(currentPoint);
+		}
+	}
 }
