@@ -53,11 +53,11 @@ namespace SCWorldEdit.Rules
 
         public void AddDirectoryEntry(Int32 argChunkX, Int32 argChunkY, Int32 argOffset)
         {
-			DirectoryEntries.Add(new DirectoryEntry(argChunkX, argChunkY, argOffset));
-
             //If the offset is zero the chunk doesn't exist in the file.
             if (argOffset != 0)
             {
+                DirectoryEntries.Add(new DirectoryEntry(argChunkX, argChunkY, argOffset));
+
                 if (_minX == 0)
                     _minX = argChunkX;
 
