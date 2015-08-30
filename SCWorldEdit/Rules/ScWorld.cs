@@ -92,6 +92,7 @@ namespace SCWorldEdit.Rules
                             chunk.Blocks[i].BlockData = file.ReadByte();
                         }
 
+                        AddChunk(chunk);
                     }
                 }
             }
