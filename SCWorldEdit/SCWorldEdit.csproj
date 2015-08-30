@@ -69,7 +69,6 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Rules\Chunk.cs" />
-    <Compile Include="Rules\DirectoryEntry.cs" />
     <Compile Include="Rules\ScRulesEngine.cs" />
     <Compile Include="Rules\ScWorld.cs" />
     <Compile Include="UserControls\ScLayer\ScLayerView.xaml.cs">
