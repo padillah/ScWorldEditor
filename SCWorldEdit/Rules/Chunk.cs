@@ -2,6 +2,18 @@ using System;
 
 namespace SCWorldEdit.Rules
 {
+    public struct ChunkPosition
+    {
+        public Int32 ChunkX;
+        public Int32 ChunkY;
+
+        public ChunkPosition(Int32 chunkX, Int32 chunkY)
+        {
+            ChunkX = chunkX;
+            ChunkY = chunkY;
+        }
+    }
+
     public struct Block
     {
         public Byte BlockType;
