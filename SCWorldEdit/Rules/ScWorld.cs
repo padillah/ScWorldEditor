@@ -8,7 +8,7 @@ namespace SCWorldEdit.Rules
 {
     public class ScWorld
     {
-        public List<DirectoryEntry> DirectoryEntries { get; set; }
+        public Dictionary<ChunkPosition, Chunk> ChunkDictionary { get; set; }
         public string FileName { get; private set; }
 
         public WriteableBitmap WorldImage
@@ -46,30 +46,51 @@ namespace SCWorldEdit.Rules
         {
             Random localRan;
             FileName = argFileName;
-            DirectoryEntries = new List<DirectoryEntry>();
+            ChunkDictionary = new Dictionary<ChunkPosition, Chunk>();
 
             _worldImage = null;
         }
 
-        public void AddDirectoryEntry(Int32 argChunkX, Int32 argChunkY, Int32 argOffset)
+        public void AddChunk(Chunk chunk)
         {
-            //If the offset is zero the chunk doesn't exist in the file.
-            if (argOffset != 0)
-            {
-                DirectoryEntries.Add(new DirectoryEntry(argChunkX, argChunkY, argOffset));
+            ChunkDictionary.Add(new ChunkPosition(chunk.ChunkX, chunk.ChunkY), chunk);
 
-                if (_minX == 0)
-                    _minX = argChunkX;
+            if (_minX == 0)
+                _minX = chunk.ChunkX;
 
-                if (_minY == 0)
-                    _minY = argChunkY;
+            if (_minY == 0)
+                _minY = chunk.ChunkY;
+            _minX = Math.Min(chunk.ChunkX, _minX);
+            _minY = Math.Min(chunk.ChunkY, _minY);
+            _maxX = Math.Max(chunk.ChunkX, _maxX);
+            _maxY = Math.Max(chunk.ChunkY, _maxY);
+        }
 
-                _minX = Math.Min(argChunkX, _minX);
-                _minY = Math.Min(argChunkY, _minY);
-                _maxX = Math.Max(argChunkX, _maxX);
-                _maxY = Math.Max(argChunkY, _maxY);
+        public Block GetBlock(int x, int y, int z)
+        {
+            int blockX = x % 16;
+            int blockZ = z % 16;
+            int chunkX = (x - blockX) / 16;
+            int chunkY = (z - blockZ) / 16;
+            ChunkPosition position = new ChunkPosition(chunkX, chunkY);
+            if (!ChunkDictionary.ContainsKey(position))
+                throw new ArgumentException("Chunk not found.");
+            Chunk chunk = ChunkDictionary[position];
+            Block block = chunk.GetBlockInChunk(blockX, y, blockZ);
+            return block;
+        }
 
-            }
+        public void SetBlock(int x, int y, int z, Block block)
+        {
+            int blockX = x % 16;
+            int blockZ = z % 16;
+            int chunkX = (x - blockX) / 16;
+            int chunkY = (z - blockZ) / 16;
+            ChunkPosition position = new ChunkPosition(chunkX, chunkY);
+            if (!ChunkDictionary.ContainsKey(position))
+                throw new ArgumentException("Chunk not found.");
+            Chunk chunk = ChunkDictionary[position];
+            chunk.SetBlockInChunk(blockX, y, blockZ, block);
         }
 
         private WriteableBitmap CreateImage()
@@ -79,10 +100,10 @@ namespace SCWorldEdit.Rules
             int localRange = _maxX * _maxY * localBitmap.BackBufferStride;
             byte[] _worldBytes = new byte[localRange];
 
-            foreach (DirectoryEntry currentEntry in DirectoryEntries)
+            foreach (var pair in ChunkDictionary)
             {
                 //offset = (argY * stride) + (argX * bpp) + colorByte
-                int localByteOffset = (currentEntry.ChunkY * localBitmap.BackBufferStride) + (currentEntry.ChunkX * _bpp) + 0; //We're just using RED right now.
+                int localByteOffset = (pair.Value.ChunkY * localBitmap.BackBufferStride) + (pair.Value.ChunkX * _bpp) + 0; //We're just using RED right now.
                 _worldBytes[localByteOffset] = 254;
                 _worldBytes[localByteOffset + 1] = 254;
             }
