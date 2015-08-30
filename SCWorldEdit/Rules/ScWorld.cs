@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -48,6 +49,54 @@ namespace SCWorldEdit.Rules
             FileName = argFileName;
             ChunkDictionary = new Dictionary<ChunkPosition, Chunk>();
 
+            /**/
+
+            using (var fileStream = File.Open(FileName, FileMode.Open, FileAccess.ReadWrite))
+            {
+                using (var file = new BinaryReader(fileStream))
+                {
+                    Dictionary<ChunkPosition, Int32> chunkOffsetDirectory = new Dictionary<ChunkPosition, Int32>();
+                    for (int i = 0; i < 65536; ++i)
+                    {
+                        Int32 chunkX = file.ReadInt32();
+                        Int32 chunkY = file.ReadInt32();
+                        Int32 offset = file.ReadInt32();
+
+                        if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
+                        {
+                            ChunkPosition position = new ChunkPosition(chunkX, chunkY);
+                            chunkOffsetDirectory.Add(position, offset);
+                        }
+                    }
+
+                    //TODO: Fill ScWorld class.
+                    foreach (var pair in chunkOffsetDirectory)
+                    {
+                        fileStream.Position = pair.Value;
+
+                        UInt32 magic1 = file.ReadUInt32();
+                        UInt32 magic2 = file.ReadUInt32();
+
+                        if (magic1 != 0xDEADBEEF || magic2 != 0xFFFFFFFF)
+                            throw new FormatException("Not a Chunks.dat file.");
+
+                        Int32 chunkX = file.ReadInt32();
+                        Int32 chunkY = file.ReadInt32();
+                        if (chunkX != pair.Key.ChunkX || chunkY != pair.Key.ChunkY)
+                            throw new InvalidDataException("Chunk header does not match chunk directory.");
+
+                        Chunk chunk = new Chunk(chunkX, chunkY);
+                        for (int i = 0; i < chunk.Blocks.Length; ++i)
+                        {
+                            chunk.Blocks[i].BlockType = file.ReadByte();
+                            chunk.Blocks[i].BlockData = file.ReadByte();
+                        }
+
+                    }
+                }
+            }
+            /**/
+
             _worldImage = null;
         }
 
@@ -95,6 +144,7 @@ namespace SCWorldEdit.Rules
 
         private WriteableBitmap CreateImage()
         {
+            //TODO: The bitmap should be set to either a percentage of the existing, or add a simple border. 2x is too large now and will only get larger as "real" maps are opened.
             WriteableBitmap localBitmap = new WriteableBitmap((_maxX * 2) + 1, (_maxY * 2) + 1, 96.0, 96.0, PixelFormats.Bgr24, BitmapPalettes.Halftone256);
 
             int localRange = _maxX * _maxY * localBitmap.BackBufferStride;
@@ -107,6 +157,7 @@ namespace SCWorldEdit.Rules
                 _worldBytes[localByteOffset] = 254;
                 _worldBytes[localByteOffset + 1] = 254;
             }
+
             localBitmap.WritePixels(new Int32Rect(0, 0, _maxX, _maxY), _worldBytes, localBitmap.BackBufferStride, 0, 0);
 
             return localBitmap;
