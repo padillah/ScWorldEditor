@@ -55,9 +55,7 @@ namespace SCWorldEdit
 
             if (fileResult)
             {
-                IScEngine localEngine = Locator.Resolve<ScEngine>();
-
-                CurrentWorld = localEngine.LoadWorld(localOpenDialog.FileName);
+                CurrentWorld.Load(localOpenDialog.FileName);
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentWorld)));

@@ -78,9 +78,8 @@ namespace SCWorldEdit.Framework
 
         }
 
-        public ScWorld(string argFileName)
+        public void Load(string argFileName)
         {
-            Random localRan;
             FileName = argFileName;
             ChunkDictionary = new Dictionary<ChunkPosition, Chunk>();
 
@@ -106,20 +105,29 @@ namespace SCWorldEdit.Framework
                     //TODO: Fill ScWorld class.
                     foreach (var pair in chunkOffsetDirectory)
                     {
+                        //Go to the chunk offset
                         fileStream.Position = pair.Value;
 
+                        //Read the next two 32-byte pieces.
                         UInt32 magic1 = file.ReadUInt32();
                         UInt32 magic2 = file.ReadUInt32();
 
+                        //Check that the Magic bytes are valid
                         if (magic1 != 0xDEADBEEF || magic2 != 0xFFFFFFFF)
                             throw new FormatException("Not a Chunks.dat file.");
 
+                        //Read the next two 32-byte pieces as the chunk X and Y (there is no Z because the entire height is always described)
                         Int32 chunkX = file.ReadInt32();
                         Int32 chunkY = file.ReadInt32();
+
+                        //Validate that the chunk being read is the same as the chunk at the offset.
                         if (chunkX != pair.Key.ChunkX || chunkY != pair.Key.ChunkY)
                             throw new InvalidDataException("Chunk header does not match chunk directory.");
 
+                        //Make a new chunk for this position
                         Chunk chunk = new Chunk(chunkX, chunkY);
+
+                        //Read the bytes into the chunk
                         for (int i = 0; i < chunk.Blocks.Length; ++i)
                         {
                             chunk.Blocks[i].BlockType = file.ReadByte();
@@ -132,7 +140,7 @@ namespace SCWorldEdit.Framework
             }
             /**/
 
-            _worldImage = null;
+            _worldImage = CreateImage();
         }
 
         public void AddChunk(Chunk chunk)
