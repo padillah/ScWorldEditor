@@ -18,6 +18,7 @@ namespace SCWorldEdit
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private ScEngine localEngine;
         /**/
         public Camera ViewportCamera { get; set; }
 
@@ -35,11 +36,13 @@ namespace SCWorldEdit
 
         public MainViewModel()
         {
+            localEngine = new ScEngine();
+
             //Int32Collection _triangleIndices;
             ClosingCommand = new RelayCommand(CloseAction);
             FileOpenCommand = new RelayCommand(FileOpen);
 
-            CurrentWorld = new ScWorld();
+            CurrentWorld = localEngine.World;
 
             ViewportCamera = CurrentWorld.WorldCamera;
 
@@ -55,7 +58,7 @@ namespace SCWorldEdit
 
             if (fileResult)
             {
-                CurrentWorld.Load(localOpenDialog.FileName);
+                localEngine.LoadWorld(localOpenDialog.FileName);
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentWorld)));
