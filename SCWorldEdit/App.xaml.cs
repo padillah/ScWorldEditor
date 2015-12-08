@@ -28,7 +28,7 @@ namespace SCWorldEdit
             Locator.RegisterSingleton<IWindowViewModelMappings, ScWorldEditMapping>();
 			Locator.RegisterSingleton<IDialogService, DialogService>();
 
-			Locator.Register<IScRulesEngine, ScRulesEngine>();
+			Locator.Register<IScEngine, ScEngine>();
 
             _mainViewModel = new MainViewModel();
             MainView view = new MainView();
