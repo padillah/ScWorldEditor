@@ -14,12 +14,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
+//SmallImageSource="pack://application:,,,/PartyTracker.CustomControls;component/Images/Search.png"
+
+
 namespace SCWorldEdit
 {
 	/// <summary>
 	/// Interaction logic for MainView.xaml
 	/// </summary>
-	public partial class MainView : Window
+	public partial class MainView : RibbonWindow
 	{
 		public MainView()
 		{

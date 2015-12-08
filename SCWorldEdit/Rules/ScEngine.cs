@@ -3,7 +3,7 @@ using ICSharpCode.SharpZipLib;
 
 //TODO: World should be Image 768x768 (256 * 3)
 
-namespace SCWorldEdit.Rules
+namespace SCWorldEdit.Framework
 {
     public interface IScEngine
 	{
