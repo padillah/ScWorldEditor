@@ -1,6 +1,6 @@
 using System;
 
-namespace SCWorldEdit.Rules
+namespace SCWorldEdit.Framework
 {
     public struct ChunkPosition
     {

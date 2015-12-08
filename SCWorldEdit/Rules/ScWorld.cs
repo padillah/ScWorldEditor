@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace SCWorldEdit.Rules
+namespace SCWorldEdit.Framework
 {
     public class ScWorld
     {
@@ -50,7 +50,6 @@ namespace SCWorldEdit.Rules
             ChunkDictionary = new Dictionary<ChunkPosition, Chunk>();
 
             /**/
-
             using (var fileStream = File.Open(FileName, FileMode.Open, FileAccess.ReadWrite))
             {
                 using (var file = new BinaryReader(fileStream))

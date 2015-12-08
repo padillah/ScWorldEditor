@@ -5,62 +5,90 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using DialogServiceLibrary.Service;
 using DialogServiceLibrary.Service.FrameworkDialogs.OpenFile;
 using SCWorldEdit.Annotations;
 using SCWorldEdit.Assets;
-using SCWorldEdit.Rules;
+using SCWorldEdit.Framework;
 using ServiceLocator;
 
 namespace SCWorldEdit
 {
-	public class MainViewModel:INotifyPropertyChanged
-	{
-		public ScWorld CurrentWorld { get; set; }
+    public class MainViewModel : INotifyPropertyChanged
+    {
+        /**/
+        public Camera ViewportCamera { get; set; }
 
-		public RelayCommand ClosingCommand { get; set; }
-		public RelayCommand FileOpenCommand { get; set; }
+        public Model3DGroup LocalModelGroup { get; set; }
 
-		public Action CloseAction { get; set; }
+        public Point3D CameraPosition { get; set; }
 
-		public MainViewModel()
-		{
-			ClosingCommand = new RelayCommand(CloseAction);
-			FileOpenCommand = new RelayCommand(FileOpen);
-		}
+        public Vector3D CameraLook { get; set; }
 
-		private void FileOpen()
-		{
-			IOpenFileDialog localOpenDialog = new OpenFileDialogViewModel();
-			IDialogService localDialogService = Locator.Resolve<IDialogService>();
+        /**/
+        public ScWorld CurrentWorld { get; set; }
 
-			bool fileResult = localDialogService.ShowOpenFileDialog(this, localOpenDialog);
+        public RelayCommand ClosingCommand { get; set; }
+        public RelayCommand FileOpenCommand { get; set; }
 
-			if (fileResult)
-			{
-				IScRulesEngine localRules = Locator.Resolve<IScRulesEngine>();
+        public Action CloseAction { get; set; }
 
-				CurrentWorld = localRules.LoadWorld(localOpenDialog.FileName);
-			}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-			OnPropertyChanged("CurrentWorld");
+        public MainViewModel()
+        {
+            //Int32Collection _triangleIndices;
+            ClosingCommand = new RelayCommand(CloseAction);
+            FileOpenCommand = new RelayCommand(FileOpen);
 
-		}
+            //TODO: Move the camera to the ScWorld class
+            CameraPosition = new Point3D(3, 2, -4);
+            CameraLook = new Vector3D(-2.5, -1.5, 3.5);
 
-		public event PropertyChangedEventHandler PropertyChanged;
+            ViewportCamera = new PerspectiveCamera(
+                CameraPosition,
+                CameraLook,  //Need to lookat 0.5, 0.5, -0.5 to see the center of the cube.
+                new Vector3D(0, 1, 0), 45);
 
-		[NotifyPropertyChangedInvocator]
-		protected virtual void OnPropertyChanged([CallerMemberName] string argPropertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null) handler(this, new PropertyChangedEventArgs(argPropertyName));
-		}
-	}
+            DirectionalLight localLight = new DirectionalLight(Colors.White, new Vector3D(0, 0, 1));
 
-	//TODO: Create an ScWorld class
-	//class ScWorld
-	//{
-	//Take a look at ChunkHelper and see if that is any use.
-	//}
+            LocalModelGroup = new Model3DGroup();
+
+            LocalModelGroup.Children.Add(localLight);
+
+            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0));
+
+            LocalModelGroup.Children.Add(localBlock.BlockModel);
+
+        }
+
+        private void FileOpen()
+        {
+            IOpenFileDialog localOpenDialog = new OpenFileDialogViewModel();
+            IDialogService localDialogService = Locator.Resolve<IDialogService>();
+
+            bool fileResult = localDialogService.ShowOpenFileDialog(this, localOpenDialog);
+
+            if (fileResult)
+            {
+                IScEngine localEngine = Locator.Resolve<ScEngine>();
+
+                CurrentWorld = localEngine.LoadWorld(localOpenDialog.FileName);
+            }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentWorld)));
+
+        }
+
+
+    }
+
+    //TODO: Create an ScWorld class
+    //class ScWorld
+    //{
+    //Take a look at ChunkHelper and see if that is any use.
+    //}
 
 }

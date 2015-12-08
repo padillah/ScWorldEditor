@@ -66,11 +66,12 @@
     <Compile Include="Assets\MenuRelayCommand.cs" />
     <Compile Include="Assets\RelayCommand.cs" />
     <Compile Include="Assets\UtilityCode.cs" />
+    <Compile Include="Framework\ScBlock.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Rules\Chunk.cs" />
-    <Compile Include="Rules\ScRulesEngine.cs" />
-    <Compile Include="Rules\ScWorld.cs" />
+    <Compile Include="Framework\Chunk.cs" />
+    <Compile Include="Framework\ScEngine.cs" />
+    <Compile Include="Framework\ScWorld.cs" />
     <Compile Include="UserControls\ScLayer\ScLayerView.xaml.cs">
       <DependentUpon>ScLayerView.xaml</DependentUpon>
     </Compile>
@@ -121,7 +122,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Framework\" />
+    <Folder Include="Rules\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpZipLib\ICSharpCode.SharpZLib.csproj">

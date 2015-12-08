@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using DialogServiceLibrary.Service;
-using SCWorldEdit.Rules;
+using SCWorldEdit.Framework;
 using SCWorldEdit.WindowViewModelMapping;
 using ServiceLocator;
 using ServiceLocator.WindowViewModelMapping;
