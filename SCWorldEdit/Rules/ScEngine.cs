@@ -1,16 +1,16 @@
-﻿using ICSharpCode.SharpZipLib;
-using System.IO;
+﻿using System.IO;
+using ICSharpCode.SharpZipLib;
 
 //TODO: World should be Image 768x768 (256 * 3)
 
 namespace SCWorldEdit.Rules
 {
-    public interface IScRulesEngine
+    public interface IScEngine
 	{
 		ScWorld LoadWorld(string argFileName);
 	}
 
-	public class ScRulesEngine : IScRulesEngine
+	public class ScEngine : IScEngine
 	{
 		public ScWorld LoadWorld(string argFileName)
 		{
