@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using DialogServiceLibrary.Service;
-using SCWorldEdit.Framework;
-using SCWorldEdit.WindowViewModelMapping;
+﻿using DialogServiceLibrary.Service;
 using ServiceLocator;
-using ServiceLocator.WindowViewModelMapping;
+using System.ComponentModel;
+using System.Windows;
 
 namespace SCWorldEdit
 {
@@ -25,11 +16,8 @@ namespace SCWorldEdit
         {
             base.OnStartup(e);
 
-            Locator.RegisterSingleton<IWindowViewModelMappings, ScWorldEditMapping>();
-			Locator.RegisterSingleton<IDialogService, DialogService>();
-
-			Locator.Register<IScEngine, ScEngine>();
-
+            Locator.RegisterSingleton<IDialogService, DialogService>();
+            
             _mainViewModel = new MainViewModel();
             MainView view = new MainView();
 
