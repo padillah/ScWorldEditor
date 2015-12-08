@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace SCWorldEdit.Framework
 {
@@ -42,6 +43,40 @@ namespace SCWorldEdit.Framework
         private const int _bpp = 3;
 
         private WriteableBitmap _worldImage;
+
+        public Point3D CameraPosition { get; set; }
+
+        public Vector3D CameraLook { get; set; }
+
+        public Camera WorldCamera { get; set; }
+
+        public Model3DGroup WorldModelGroup { get; set; }
+
+        public ScWorld()
+        {
+            CameraPosition = new Point3D(3, 2, -4);
+            CameraLook = new Vector3D(-2.5, -1.5, 3.5);
+
+            WorldCamera = new PerspectiveCamera(
+                CameraPosition,
+                CameraLook,  //Need to lookat 0.5, 0.5, -0.5 to see the center of the cube.
+                new Vector3D(0, 1, 0), 45);
+
+            DirectionalLight localLight = new DirectionalLight(Colors.White, new Vector3D(1, -1, -1));
+
+            WorldModelGroup = new Model3DGroup();
+
+            WorldModelGroup.Children.Add(localLight);
+
+            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0));
+            ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0));
+            ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0));
+
+            WorldModelGroup.Children.Add(localBlock.BlockModel);
+            WorldModelGroup.Children.Add(localBlock2.BlockModel);
+            WorldModelGroup.Children.Add(localBlock3.BlockModel);
+
+        }
 
         public ScWorld(string argFileName)
         {
@@ -147,20 +182,22 @@ namespace SCWorldEdit.Framework
             //TODO: The bitmap should be set to either a percentage of the existing, or add a simple border. 2x is too large now and will only get larger as "real" maps are opened.
             WriteableBitmap localBitmap = new WriteableBitmap((_maxX * 2) + 1, (_maxY * 2) + 1, 96.0, 96.0, PixelFormats.Bgr24, BitmapPalettes.Halftone256);
 
-            int localRange = _maxX * _maxY * localBitmap.BackBufferStride;
-            byte[] _worldBytes = new byte[localRange];
-
-            foreach (var pair in ChunkDictionary)
-            {
-                //offset = (argY * stride) + (argX * bpp) + colorByte
-                int localByteOffset = (pair.Value.ChunkY * localBitmap.BackBufferStride) + (pair.Value.ChunkX * _bpp) + 0; //We're just using RED right now.
-                _worldBytes[localByteOffset] = 254;
-                _worldBytes[localByteOffset + 1] = 254;
-            }
-
-            localBitmap.WritePixels(new Int32Rect(0, 0, _maxX, _maxY), _worldBytes, localBitmap.BackBufferStride, 0, 0);
-
             return localBitmap;
+
+            //int localRange = _maxX * _maxY * localBitmap.BackBufferStride;
+            //byte[] _worldBytes = new byte[localRange];
+
+            //foreach (var pair in ChunkDictionary)
+            //{
+            //    //offset = (argY * stride) + (argX * bpp) + colorByte
+            //    int localByteOffset = (pair.Value.ChunkY * localBitmap.BackBufferStride) + (pair.Value.ChunkX * _bpp) + 0; //We're just using RED right now.
+            //    _worldBytes[localByteOffset] = 254;
+            //    _worldBytes[localByteOffset + 1] = 254;
+            //}
+
+            //localBitmap.WritePixels(new Int32Rect(0, 0, _maxX, _maxY), _worldBytes, localBitmap.BackBufferStride, 0, 0);
+
+            //return localBitmap;
         }
     }
 }
