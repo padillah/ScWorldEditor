@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Media.Media3D;
 
 namespace SCWorldEdit.Framework
 {
@@ -24,15 +25,14 @@ namespace SCWorldEdit.Framework
         const int SizeZ = 16;
         public ScBlock[] Blocks { get; private set; }
 
-        public ScChunk(Int32 chunkX = -1, Int32 chunkZ = -1)
+        public ScChunk(Int32 argChunkX = -1, Int32 argChunkZ = -1)
         {
-            ChunkX = chunkX;
-            ChunkZ = chunkZ;
+            ChunkX = argChunkX;
+            ChunkZ = argChunkZ;
             Blocks = new ScBlock[SizeX * SizeY * SizeZ];
             for (var i = 0; i < Blocks.Length; ++i)
             {
-                Blocks[i].BlockType = 0;// Air
-                Blocks[i].BlockData = 0;// No data
+                Blocks[i] = new ScBlock(new Point3D(argChunkX, 0, argChunkZ) ); //Air, No Data
             }
         }
 
