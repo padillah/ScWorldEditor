@@ -67,9 +67,10 @@
     <Compile Include="Assets\RelayCommand.cs" />
     <Compile Include="Assets\UtilityCode.cs" />
     <Compile Include="Framework\ScBlock.cs" />
+    <Compile Include="Framework\ScChunk.cs" />
+    <Compile Include="Framework\ScChunkPosition.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="Framework\Chunk.cs" />
     <Compile Include="Framework\ScEngine.cs" />
     <Compile Include="Framework\ScWorld.cs" />
     <Compile Include="UserControls\ScLayer\ScLayerView.xaml.cs">
