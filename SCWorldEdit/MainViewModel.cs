@@ -18,14 +18,11 @@ namespace SCWorldEdit
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private ScEngine localEngine;
         /**/
         public Camera ViewportCamera { get; set; }
 
         public Model3DGroup LocalModelGroup { get; set; }
-
-        public Point3D CameraPosition { get; set; }
-
-        public Vector3D CameraLook { get; set; }
 
         /**/
         public ScWorld CurrentWorld { get; set; }
@@ -39,29 +36,17 @@ namespace SCWorldEdit
 
         public MainViewModel()
         {
+            localEngine = new ScEngine();
+
             //Int32Collection _triangleIndices;
             ClosingCommand = new RelayCommand(CloseAction);
             FileOpenCommand = new RelayCommand(FileOpen);
 
-            //TODO: Move the camera to the ScWorld class
-            CameraPosition = new Point3D(3, 2, -4);
-            CameraLook = new Vector3D(-2.5, -1.5, 3.5);
+            CurrentWorld = localEngine.World;
 
-            ViewportCamera = new PerspectiveCamera(
-                CameraPosition,
-                CameraLook,  //Need to lookat 0.5, 0.5, -0.5 to see the center of the cube.
-                new Vector3D(0, 1, 0), 45);
+            ViewportCamera = CurrentWorld.WorldCamera;
 
-            DirectionalLight localLight = new DirectionalLight(Colors.White, new Vector3D(0, 0, 1));
-
-            LocalModelGroup = new Model3DGroup();
-
-            LocalModelGroup.Children.Add(localLight);
-
-            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0));
-
-            LocalModelGroup.Children.Add(localBlock.BlockModel);
-
+            LocalModelGroup = CurrentWorld.WorldModelGroup;
         }
 
         private void FileOpen()
@@ -73,9 +58,7 @@ namespace SCWorldEdit
 
             if (fileResult)
             {
-                IScEngine localEngine = Locator.Resolve<ScEngine>();
-
-                CurrentWorld = localEngine.LoadWorld(localOpenDialog.FileName);
+                localEngine.LoadWorld(localOpenDialog.FileName);
             }
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentWorld)));

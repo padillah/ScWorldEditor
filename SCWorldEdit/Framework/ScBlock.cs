@@ -12,8 +12,14 @@ namespace SCWorldEdit.Framework
     {
         public GeometryModel3D BlockModel { get; set; }
 
+        public Byte BlockType;
+        public Byte BlockData;
+
         public ScBlock(Point3D argPosition)
         {
+            BlockType = 0;
+            BlockData = 0;
+
             var localMesh = new MeshGeometry3D();
 
             //Positions="0,0,0  1,0,0  0,1,0  1,1,0  0,0,-1  1,0,-1  0,1,-1  1,1,-1 "
@@ -45,5 +51,7 @@ namespace SCWorldEdit.Framework
             BlockModel.Material = localMaterial;
 
         }
+
+
     }
 }

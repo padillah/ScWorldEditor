@@ -76,7 +76,6 @@
       <DependentUpon>ScLayerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\ScLayer\ScLayerViewModel.cs" />
-    <Compile Include="WindowViewModelMapping\ScWorldEditMapping.cs" />
     <Page Include="MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

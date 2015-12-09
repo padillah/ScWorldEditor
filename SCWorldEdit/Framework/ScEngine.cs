@@ -5,14 +5,17 @@ using ICSharpCode.SharpZipLib;
 
 namespace SCWorldEdit.Framework
 {
-    public interface IScEngine
-	{
-		ScWorld LoadWorld(string argFileName);
-	}
 
-	public class ScEngine : IScEngine
+	public class ScEngine
 	{
-		public ScWorld LoadWorld(string argFileName)
+        public ScWorld World { get; set; }
+
+        public ScEngine()
+        {
+            World = new ScWorld();
+        }
+
+		public void LoadWorld(string argFileName)
 		{
 			//Create Temp directory
 			DirectoryInfo localDirectory = Directory.CreateDirectory("ScWorldEdit");
@@ -26,10 +29,10 @@ namespace SCWorldEdit.Framework
 			
 			//Open the "Chunks.dat" file.
 			string chunkFileName = localDirectory.FullName + "\\Chunks.dat";
-			ScWorld localWorld = new ScWorld(chunkFileName);
+            World.Load(chunkFileName);
+			//ScWorld localWorld = new ScWorld(chunkFileName);
 
-
-			return localWorld;
+			//return localWorld;
 		}
 	}
 }
