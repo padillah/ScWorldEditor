@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -68,10 +69,10 @@ namespace SCWorldEdit.Framework
 
             WorldModelGroup.Children.Add(localLight);
 
-            /**/
-            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0));
-            ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0));
-            ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0));
+            /* Not for the real app this is just so we have something to look at for now.*/
+            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0), 0, 0);
+            ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0), 0, 0);
+            ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0), 0, 0);
 
             WorldModelGroup.Children.Add(localBlock.BlockModel);
             WorldModelGroup.Children.Add(localBlock2.BlockModel);
@@ -89,7 +90,7 @@ namespace SCWorldEdit.Framework
             {
                 using (var file = new BinaryReader(fileStream))
                 {
-                    Dictionary<ScChunkPosition, Int32> chunkOffsetDirectory = new Dictionary<ScChunkPosition, Int32>();
+                    List<ScChunkPosition> chunkOffsetDirectory = new List<ScChunkPosition>();
                     for (int i = 0; i < 65536; ++i)
                     {
                         Int32 chunkX = file.ReadInt32();
@@ -98,44 +99,21 @@ namespace SCWorldEdit.Framework
 
                         if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
                         {
-                            ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
-                            chunkOffsetDirectory.Add(position, offset);
+                            chunkOffsetDirectory.Add(new ScChunkPosition(chunkX, chunkZ, offset));
                         }
                     }
 
                     //TODO: Fill ScWorld class.
-                    foreach (var pair in chunkOffsetDirectory)
+                    foreach (var currentChunkPosition in chunkOffsetDirectory)
                     {
                         //Go to the chunk offset
-                        fileStream.Position = pair.Value;
+                        fileStream.Position = currentChunkPosition.Offset;
 
-                        //Read the next two 32-byte pieces.
-                        UInt32 magic1 = file.ReadUInt32();
-                        UInt32 magic2 = file.ReadUInt32();
+                        byte[] chunkInfo = file.ReadBytes(66576);
 
-                        //Check that the Magic bytes are valid
-                        if (magic1 != 0xDEADBEEF || magic2 != 0xFFFFFFFF)
-                            throw new FormatException("Not a Chunks.dat file.");
+                        ScChunk chunk = new ScChunk(currentChunkPosition,  chunkInfo);
 
-                        //Read the next two 32-byte pieces as the chunk X and Z (there is no Z because the entire height is always described)
-                        Int32 chunkX = file.ReadInt32();
-                        Int32 chunkZ = file.ReadInt32();
-
-                        //Validate that the chunk being read is the same as the chunk at the offset.
-                        if (chunkX != pair.Key.ChunkX || chunkZ != pair.Key.ChunkZ)
-                            throw new InvalidDataException("Chunk header does not match chunk directory.");
-
-                        //Make a new chunk for this position
-                        ScChunk chunk = new ScChunk(chunkX, chunkZ);
-
-                        //Read the bytes into the chunk. The first block is Y = 0 = Bedrock. Then it goes up to Air. Y = 64 is water level.
-                        for (int i = 0; i < chunk.Blocks.Length; ++i)
-                        {
-                            chunk.Blocks[i].BlockType = file.ReadByte();
-                            chunk.Blocks[i].BlockData = file.ReadByte();
-                        }
-
-                        AddChunk(chunk);
+                        AddChunk(currentChunkPosition, chunk);
                     }
                 }
             }
@@ -144,9 +122,9 @@ namespace SCWorldEdit.Framework
             _worldImage = CreateImage();
         }
 
-        public void AddChunk(ScChunk chunk)
+        public void AddChunk(ScChunkPosition argChunkPosition, ScChunk chunk)
         {
-            ChunkDictionary.Add(new ScChunkPosition(chunk.ChunkX, chunk.ChunkZ), chunk);
+            ChunkDictionary.Add(argChunkPosition, chunk);
 
             if (_minX == 0)
                 _minX = chunk.ChunkX;
@@ -165,25 +143,38 @@ namespace SCWorldEdit.Framework
             int blockZ = z % 16;
             int chunkX = (x - blockX) / 16;
             int chunkZ = (z - blockZ) / 16;
-            ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
-            if (!ChunkDictionary.ContainsKey(position))
-                throw new ArgumentException("Chunk not found.");
-            ScChunk chunk = ChunkDictionary[position];
-            ScBlock block = chunk.GetBlockInChunk(blockX, y, blockZ);
-            return block;
+
+            var localChunk = ChunkDictionary
+                .Where(localPair =>
+                localPair.Key.ChunkX == chunkX &&
+                localPair.Key.ChunkZ == chunkZ)
+                .SingleOrDefault()
+                .Value;
+
+            if (localChunk == null)
+            { throw new ArgumentException("Chunk not found."); }
+
+            ////ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
+            ////if (!ChunkDictionary.ContainsKey(position))
+            ////    throw new ArgumentException("Chunk not found.");
+            ////ScChunk chunk = ChunkDictionary[position];
+            ////ScBlock block = chunk.GetBlockInChunk(blockX, y, blockZ);
+            //return block;
+
+            return null;
         }
 
         public void SetBlock(int x, int y, int z, ScBlock block)
         {
-            int blockX = x % 16;
-            int blockZ = z % 16;
-            int chunkX = (x - blockX) / 16;
-            int chunkZ = (z - blockZ) / 16;
-            ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
-            if (!ChunkDictionary.ContainsKey(position))
-                throw new ArgumentException("Chunk not found.");
-            ScChunk chunk = ChunkDictionary[position];
-            chunk.SetBlockInChunk(blockX, y, blockZ, block);
+            //int blockX = x % 16;
+            //int blockZ = z % 16;
+            //int chunkX = (x - blockX) / 16;
+            //int chunkZ = (z - blockZ) / 16;
+            //ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
+            //if (!ChunkDictionary.ContainsKey(position))
+            //    throw new ArgumentException("Chunk not found.");
+            //ScChunk chunk = ChunkDictionary[position];
+            //chunk.SetBlockInChunk(blockX, y, blockZ, block);
         }
 
         private WriteableBitmap CreateImage()

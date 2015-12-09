@@ -68,10 +68,4 @@ namespace SCWorldEdit
 
     }
 
-    //TODO: Create an ScWorld class
-    //class ScWorld
-    //{
-    //Take a look at ChunkHelper and see if that is any use.
-    //}
-
 }

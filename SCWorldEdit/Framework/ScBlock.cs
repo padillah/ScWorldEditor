@@ -14,11 +14,11 @@ namespace SCWorldEdit.Framework
 
         public Byte BlockType;
         public Byte BlockData;
-
-        public ScBlock(Point3D argPosition)
+        
+        public ScBlock(Point3D argPosition, Byte argBlockType, Byte argBlockData)
         {
-            BlockType = 0;
-            BlockData = 0;
+            BlockType = argBlockType;
+            BlockData = argBlockData;
 
             #region ** Mesh Posittions **
 
@@ -60,7 +60,6 @@ namespace SCWorldEdit.Framework
             BlockModel.Material = localMaterial;
 
         }
-
 
     }
 }
