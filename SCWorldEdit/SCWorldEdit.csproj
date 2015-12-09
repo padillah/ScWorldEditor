@@ -68,6 +68,7 @@
     <Compile Include="Assets\UtilityCode.cs" />
     <Compile Include="Framework\ScBlock.cs" />
     <Compile Include="Framework\ScChunk.cs" />
+    <Compile Include="Framework\ScChunkPosition.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Framework\ScEngine.cs" />
