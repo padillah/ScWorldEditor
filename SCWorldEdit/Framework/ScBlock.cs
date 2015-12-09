@@ -20,6 +20,8 @@ namespace SCWorldEdit.Framework
             BlockType = 0;
             BlockData = 0;
 
+            #region ** Mesh Posittions **
+
             var localMesh = new MeshGeometry3D();
 
             //Positions="0,0,0  1,0,0  0,1,0  1,1,0  0,0,-1  1,0,-1  0,1,-1  1,1,-1 "
@@ -32,6 +34,10 @@ namespace SCWorldEdit.Framework
             localMesh.Positions.Add(new Point3D(argPosition.X, argPosition.Y + 1, argPosition.Z - 1));     // 0, 1, -1
             localMesh.Positions.Add(new Point3D(argPosition.X + 1, argPosition.Y + 1, argPosition.Z - 1)); // 1, 1, -1
 
+            #endregion
+
+            #region ** Triangle Indicies **
+
             //TriangleIndices = "0 1 2 3 2 1   3 1 5 3 5 7   0 6 4 0 2 6   2 3 6 3 7 6   0 4 5 0 5 1   4 7 5 4 6 7 "
             var triangleIndices = new Int32Collection {
                                                         0, 1 ,2 ,3, 2, 1,  //Front
@@ -43,6 +49,9 @@ namespace SCWorldEdit.Framework
                                                     };
 
             localMesh.TriangleIndices = triangleIndices;
+
+            #endregion
+
             DiffuseMaterial localMaterial = new DiffuseMaterial(Brushes.Red);
 
             BlockModel = new GeometryModel3D();

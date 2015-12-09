@@ -68,6 +68,7 @@ namespace SCWorldEdit.Framework
 
             WorldModelGroup.Children.Add(localLight);
 
+            /**/
             ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0));
             ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0));
             ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0));
@@ -92,12 +93,12 @@ namespace SCWorldEdit.Framework
                     for (int i = 0; i < 65536; ++i)
                     {
                         Int32 chunkX = file.ReadInt32();
-                        Int32 chunkY = file.ReadInt32();
+                        Int32 chunkZ = file.ReadInt32();
                         Int32 offset = file.ReadInt32();
 
                         if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
                         {
-                            ScChunkPosition position = new ScChunkPosition(chunkX, chunkY);
+                            ScChunkPosition position = new ScChunkPosition(chunkX, chunkZ);
                             chunkOffsetDirectory.Add(position, offset);
                         }
                     }
@@ -116,7 +117,7 @@ namespace SCWorldEdit.Framework
                         if (magic1 != 0xDEADBEEF || magic2 != 0xFFFFFFFF)
                             throw new FormatException("Not a Chunks.dat file.");
 
-                        //Read the next two 32-byte pieces as the chunk X and Y (there is no Z because the entire height is always described)
+                        //Read the next two 32-byte pieces as the chunk X and Z (there is no Z because the entire height is always described)
                         Int32 chunkX = file.ReadInt32();
                         Int32 chunkZ = file.ReadInt32();
 
@@ -127,7 +128,7 @@ namespace SCWorldEdit.Framework
                         //Make a new chunk for this position
                         ScChunk chunk = new ScChunk(chunkX, chunkZ);
 
-                        //Read the bytes into the chunk
+                        //Read the bytes into the chunk. The first block is Y = 0 = Bedrock. Then it goes up to Air. Y = 64 is water level.
                         for (int i = 0; i < chunk.Blocks.Length; ++i)
                         {
                             chunk.Blocks[i].BlockType = file.ReadByte();

@@ -30,7 +30,6 @@ namespace SCWorldEdit.Framework
 			//Open the "Chunks.dat" file.
 			string chunkFileName = localDirectory.FullName + "\\Chunks.dat";
             World.Load(chunkFileName);
-			//ScWorld localWorld = new ScWorld(chunkFileName);
 
 			//return localWorld;
 		}
