@@ -66,6 +66,8 @@
     <Compile Include="Assets\MenuRelayCommand.cs" />
     <Compile Include="Assets\RelayCommand.cs" />
     <Compile Include="Assets\UtilityCode.cs" />
+    <Compile Include="Framework\IMaterialHandler.cs" />
+    <Compile Include="Framework\MaterialHandler.cs" />
     <Compile Include="Framework\ScBlock.cs" />
     <Compile Include="Framework\ScChunk.cs" />
     <Compile Include="Framework\ScChunkPosition.cs" />

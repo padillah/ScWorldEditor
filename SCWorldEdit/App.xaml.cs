@@ -1,4 +1,5 @@
 ﻿using DialogServiceLibrary.Service;
+using SCWorldEdit.Framework;
 using ServiceLocator;
 using System.ComponentModel;
 using System.Windows;
@@ -17,6 +18,7 @@ namespace SCWorldEdit
             base.OnStartup(e);
 
             Locator.RegisterSingleton<IDialogService, DialogService>();
+            Locator.RegisterSingleton<IMaterialHandler, MaterialHandler>();
             
             _mainViewModel = new MainViewModel();
             MainView view = new MainView();

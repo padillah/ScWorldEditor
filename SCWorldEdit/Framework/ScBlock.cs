@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using ServiceLocator;
 
 namespace SCWorldEdit.Framework
 {
@@ -17,6 +18,8 @@ namespace SCWorldEdit.Framework
         
         public ScBlock(Point3D argPosition, Byte argBlockType, Byte argBlockData)
         {
+            var localMaterialHandler = Locator.Resolve<IMaterialHandler>();
+
             BlockType = argBlockType;
             BlockData = argBlockData;
 
@@ -52,7 +55,7 @@ namespace SCWorldEdit.Framework
 
             #endregion
 
-            DiffuseMaterial localMaterial = new DiffuseMaterial(Brushes.Red);
+            DiffuseMaterial localMaterial = localMaterialHandler.MaterialInventory[3];
 
             BlockModel = new GeometryModel3D();
 
