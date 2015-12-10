@@ -27,6 +27,9 @@ namespace SCWorldEdit.Framework
 
             var localMesh = new MeshGeometry3D();
 
+			//????
+			//Blobk position is Chunk location *16 + block index (how far into the chunk is the block)
+			//????
             //Positions="0,0,0  1,0,0  0,1,0  1,1,0  0,0,-1  1,0,-1  0,1,-1  1,1,-1 "
             localMesh.Positions.Add(argPosition);                                                          // 0, 0,  0
             localMesh.Positions.Add(new Point3D(argPosition.X + 1, argPosition.Y, argPosition.Z));         // 1, 0,  0
