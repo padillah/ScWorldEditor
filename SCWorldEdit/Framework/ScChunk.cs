@@ -51,7 +51,7 @@ namespace SCWorldEdit.Framework
                 //For every 128 ChunkY we increment ChunkZ
                 //For every 16 ChunkZ we reset ChunkZ and increment ChunkX
 
-                Blocks[blockYPosition] = new ScBlock(new Point3D(ChunkX, blockYPosition, ChunkZ), argChunkInfo[infoIndex++], argChunkInfo[infoIndex++] ); //Block Type, Block Data                
+                Blocks[blockYPosition] = new ScBlock(new Point3D(ChunkX, 0, ChunkZ), argChunkInfo[infoIndex++], argChunkInfo[infoIndex++] ); //Block Type, Block Data                
             }
         }
 

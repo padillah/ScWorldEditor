@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using ServiceLocator;
 
 namespace SCWorldEdit.Framework
 {
@@ -17,6 +18,8 @@ namespace SCWorldEdit.Framework
         
         public ScBlock(Point3D argPosition, Byte argBlockType, Byte argBlockData)
         {
+            var localMaterialHandler = Locator.Resolve<IMaterialHandler>();
+
             BlockType = argBlockType;
             BlockData = argBlockData;
 
@@ -24,6 +27,9 @@ namespace SCWorldEdit.Framework
 
             var localMesh = new MeshGeometry3D();
 
+			//????
+			//Blobk position is Chunk location *16 + block index (how far into the chunk is the block)
+			//????
             //Positions="0,0,0  1,0,0  0,1,0  1,1,0  0,0,-1  1,0,-1  0,1,-1  1,1,-1 "
             localMesh.Positions.Add(argPosition);                                                          // 0, 0,  0
             localMesh.Positions.Add(new Point3D(argPosition.X + 1, argPosition.Y, argPosition.Z));         // 1, 0,  0
@@ -52,7 +58,7 @@ namespace SCWorldEdit.Framework
 
             #endregion
 
-            DiffuseMaterial localMaterial = new DiffuseMaterial(Brushes.Red);
+            DiffuseMaterial localMaterial = localMaterialHandler.MaterialInventory[3];
 
             BlockModel = new GeometryModel3D();
 
