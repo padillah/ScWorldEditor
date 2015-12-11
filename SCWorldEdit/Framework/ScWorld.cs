@@ -55,12 +55,12 @@ namespace SCWorldEdit.Framework
 
         public ScWorld()
         {
-            CameraPosition = new Point3D(3, 2, -4);
-            CameraLook = new Vector3D(-2.5, -1.5, 3.5);
+            CameraPosition = new Point3D(1, 1, -1);
+            CameraLook = new Vector3D(-0.5, -0.5, 0.5);
 
             WorldCamera = new PerspectiveCamera(
                 CameraPosition,
-                CameraLook,  //Need to lookat 0.5, 0.5, -0.5 to see the center of the cube.
+                CameraLook,  
                 new Vector3D(0, 1, 0), 45);
 
             DirectionalLight localLight = new DirectionalLight(Colors.White, new Vector3D(1, -1, -1));
@@ -69,16 +69,8 @@ namespace SCWorldEdit.Framework
 
             WorldModelGroup.Children.Add(localLight);
 
-            /* Not for the real app this is just so we have something to look at for now.*/
-            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0), 0, 0);
-            ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0), 0, 0);
-            ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0), 0, 0);
 
-            WorldModelGroup.Children.Add(localBlock.BlockModel);
-            WorldModelGroup.Children.Add(localBlock2.BlockModel);
-            WorldModelGroup.Children.Add(localBlock3.BlockModel);
 
-        }
 
         public void Load(string argFileName)
         {
