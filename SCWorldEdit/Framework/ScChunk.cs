@@ -17,6 +17,15 @@ namespace SCWorldEdit.Framework
 
         public ScChunk(ScChunkPosition argChunkPosition, byte[] argChunkInfo)
         {
+           // new Thread(() =>
+            //{
+                LoadChunk(argChunkPosition, argChunkInfo);
+            //}).Start();
+
+        }
+
+        private void LoadChunk(ScChunkPosition argChunkPosition, byte[] argChunkInfo)
+        {
             //TODO: Thread this (now that the fileread is done).
             Blocks = new ScBlock[SizeX * SizeY * SizeZ];
             /**/
