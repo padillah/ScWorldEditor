@@ -58,12 +58,10 @@ namespace SCWorldEdit.Framework
 
             #endregion
 
-            DiffuseMaterial localMaterial = localMaterialHandler.MaterialInventory[3];
-
             BlockModel = new GeometryModel3D();
 
             BlockModel.Geometry = localMesh;
-            BlockModel.Material = localMaterial;
+            BlockModel.Material = localMaterialHandler.MaterialInventory[3];
 
         }
 
