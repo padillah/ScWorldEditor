@@ -38,9 +38,9 @@ namespace SCWorldEdit.Framework
         }
 
         private Int32 _minX = 0;
-        private Int32 _minY = 0;
+        private Int32 _minZ = 0;
         private Int32 _maxX = 0;
-        private Int32 _maxY = 0;
+        private Int32 _maxZ = 0;
         private const int _bpp = 3;
 
         private WriteableBitmap _worldImage;
@@ -68,6 +68,7 @@ namespace SCWorldEdit.Framework
             WorldModelGroup = new Model3DGroup();
 
             WorldModelGroup.Children.Add(localLight);
+        }
 
 
 
