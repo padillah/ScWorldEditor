@@ -1,13 +1,11 @@
-﻿//using System;
-//using System.Globalization;
-//using System.Windows;
-//using System.Windows.Controls;
-//using System.Windows.Data;
-//using System.Windows.Media;
-//using ServiceLocator;
+﻿using System;
 
-//namespace SCWorldEdit.Assets
-//{
+namespace SCWorldEdit.Assets
+{
+    public class ProductVersionNotSupportedException : ApplicationException
+    { }
+}
+
 //    [ValueConversion(typeof(bool), typeof(DataGridSelectionMode))]
 //    public class BoolSelectionModeConverter : IValueConverter
 //    {
@@ -638,23 +636,23 @@
 //    private string Serialize(object toSerialize)
 //    {
 //        XmlWriterSettings settings = new XmlWriterSettings();
-      
+
 //        // You might want to wrap these in #if DEBUG's 
-      
+
 //        settings.Indent = true;
 //        settings.NewLineOnAttributes = true;
-      
+
 //        // this gets rid of the XML version 
 //        settings.ConformanceLevel = ConformanceLevel.Fragment;
-      
+
 //        // buffer to a stringbuilder
 //        StringBuilder sb = new StringBuilder();
 //        XmlWriter writer = XmlWriter.Create(sb, settings);
-      
+
 //        // Need moar documentation on the manager, plox MSDN
 //        XamlDesignerSerializationManager manager = new XamlDesignerSerializationManager(writer);
 //        manager.XamlWriterMode = XamlWriterMode.Expression;
-      
+
 //        // its extremely rare for this to throw an exception
 //        XamlWriter.Save(toSerialize, manager);
 
@@ -671,10 +669,10 @@
 //    private object Deserialize(string xamlText)
 //    {
 //        XmlDocument doc = new XmlDocument();
-      
+
 //        // may throw XmlException
 //        doc.LoadXml(xamlText);
-      
+
 //        // may throw XamlParseException
 //        return XamlReader.Load(new XmlNodeReader(doc));
 //    }

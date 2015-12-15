@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Xml.Linq;
+using SCWorldEdit.Assets;
 
 namespace SCWorldEdit.Framework
 {
@@ -74,17 +75,24 @@ namespace SCWorldEdit.Framework
 
         public void Load(string argDirName)
         {
+            byte[] chunksDat;
             /**/
             ProjectFilename = argDirName + "\\Project.xml";
             XDocument localScProject = XDocument.Load(ProjectFilename);
 
-            string playerPositionXml = localScProject.Elements("Project").Elements("Entities")
-                .Elements("Entity").Where(scTemp => (string)scTemp.Attribute("Name") == "Player")
-                .Elements("Values").Where(scTemp => (string)scTemp.Attribute("Name") == "Body")
-                .Elements("Value").Where(scTemp => (string)scTemp.Attribute("Name") == "Position")
-                .Attributes("Value").SingleOrDefault().Value;
+          var projectVersion =  localScProject.Element("Project")?.Attribute("Version").Value;
+            if (projectVersion != null && projectVersion != "1.27")
+            {
+                throw new ProductVersionNotSupportedException();
+            }
 
-            Point3D playerPosition = Point3D.Parse(playerPositionXml);
+            var projectEntitiesXml = localScProject.Elements("Project").Elements("Entities");
+            var entityPlayerXml = projectEntitiesXml.Elements("Entity").Where(scTemp => (string)scTemp.Attribute("Name") == "Player");
+            var playerBodyXml = entityPlayerXml.Elements("Values").Where(scTemp => (string)scTemp.Attribute("Name") == "Body");
+            var bodyPositionXml = playerBodyXml.Elements("Value").Where(scTemp => (string)scTemp.Attribute("Name") == "Position");
+            var positionValue = bodyPositionXml.Attributes("Value").SingleOrDefault().Value;
+
+            Point3D playerPosition = Point3D.Parse(positionValue);
 
 
             /**/
@@ -96,51 +104,57 @@ namespace SCWorldEdit.Framework
             {
                 using (BinaryReader file = new BinaryReader(fileStream))
                 {
-                    List<ScChunkPosition> chunkOffsetDirectory = new List<ScChunkPosition>();
-                    for (int i = 0; i < 65536; ++i)
-                    {
-                        Int32 chunkX = file.ReadInt32();
-                        Int32 chunkZ = file.ReadInt32();
-                        Int32 offset = file.ReadInt32();
-
-
-                        if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
-                        {
-                            chunkOffsetDirectory.Add(new ScChunkPosition(chunkX, chunkZ, offset));
-
-                            /**/
-                            if (_minX == 0)
-                                _minX = chunkX;
-
-                            if (_minZ == 0)
-                                _minZ = chunkZ;
-                            _minX = Math.Min(chunkX, _minX);
-                            _minZ = Math.Min(chunkZ, _minZ);
-                            _maxX = Math.Max(chunkX, _maxX);
-                            _maxZ = Math.Max(chunkZ, _maxZ);
-                            /**/
-                        }
-                    }
-
-                    //Now that I know how big it will be I can make the chunk map.
-                    _worldImage = CreateImage();
-
-                    //TODO: Fill ScWorld class.
-                    foreach (ScChunkPosition currentChunkPosition in chunkOffsetDirectory)
-                    //Parallel.ForEach(chunkOffsetDirectory, (currentChunkPosition)=> 
-                    {
-                        //ImageMapChunk(currentChunkPosition);
-                        //Go to the chunk offset
-                        fileStream.Position = currentChunkPosition.Offset;
-
-                        byte[] chunkInfo = file.ReadBytes(66576);
-
-                        ScChunk chunk = new ScChunk(currentChunkPosition, chunkInfo);
-
-                        ChunkDictionary.Add(currentChunkPosition, chunk);
-                    }  // );
+                    chunksDat = file.ReadBytes((int)fileStream.Length);
                 }
             }
+
+            List<ScChunkPosition> chunkOffsetDirectory = new List<ScChunkPosition>(65537);
+            for (int i = 0; i < 65536; ++i)
+            {
+                //Int32 chunkX = file.ReadInt32(); // 0, 1
+                Int32 chunkX = BitConverter.ToInt32(chunksDat, 0); // 0, 1
+                //Int32 chunkZ = file.ReadInt32(); // 2, 3
+                Int32 chunkZ = BitConverter.ToInt32(chunksDat, 4); // 2, 3
+                //Int32 offset = file.ReadInt32(); // 4, 5
+                Int32 offset = BitConverter.ToInt32(chunksDat, 8); // 4, 5
+
+                if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
+                {
+                    chunkOffsetDirectory.Add(new ScChunkPosition(chunkX, chunkZ, offset));
+
+                    /**/
+                    if (_minX == 0)
+                        _minX = chunkX;
+
+                    if (_minZ == 0)
+                        _minZ = chunkZ;
+                    _minX = Math.Min(chunkX, _minX);
+                    _minZ = Math.Min(chunkZ, _minZ);
+                    _maxX = Math.Max(chunkX, _maxX);
+                    _maxZ = Math.Max(chunkZ, _maxZ);
+                    /**/
+                }
+            }
+
+            //Now that I know how big it will be I can make the chunk map.
+            _worldImage = CreateImage();
+
+            //TODO: Fill ScWorld class.
+            foreach (ScChunkPosition currentChunkPosition in chunkOffsetDirectory)
+            //Parallel.ForEach(chunkOffsetDirectory, (currentChunkPosition)=> 
+            {
+                ImageMapChunk(currentChunkPosition);
+                //Go to the chunk offset
+                //fileStream.Position = currentChunkPosition.Offset;
+                //chunksDat
+                //byte[] chunkInfo = new byte[66576];
+                //Buffer.BlockCopy(chunksDat, currentChunkPosition.Offset, chunkInfo, 0, 66576);
+                //ScChunk chunk = new ScChunk(currentChunkPosition, chunkInfo);
+
+                //ChunkDictionary.Add(currentChunkPosition, chunk);
+            }  // );
+
+
             /**/
 
         }
