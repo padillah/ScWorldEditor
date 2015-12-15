@@ -6,13 +6,16 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
+using System.Xml.Linq;
+using SCWorldEdit.Assets;
 
 namespace SCWorldEdit.Framework
 {
     public class ScWorld
     {
         public Dictionary<ScChunkPosition, ScChunk> ChunkDictionary { get; set; }
-        public string FileName { get; private set; }
+        public string ChunkFilename { get; private set; }
+        public string ProjectFilename { get; private set; }
 
         public WriteableBitmap WorldImage
         {
@@ -38,9 +41,9 @@ namespace SCWorldEdit.Framework
         }
 
         private Int32 _minX = 0;
-        private Int32 _minY = 0;
+        private Int32 _minZ = 0;
         private Int32 _maxX = 0;
-        private Int32 _maxY = 0;
+        private Int32 _maxZ = 0;
         private const int _bpp = 3;
 
         private WriteableBitmap _worldImage;
@@ -55,12 +58,12 @@ namespace SCWorldEdit.Framework
 
         public ScWorld()
         {
-            CameraPosition = new Point3D(3, 2, -4);
-            CameraLook = new Vector3D(-2.5, -1.5, 3.5);
+            CameraPosition = new Point3D(1, 1, -1);
+            CameraLook = new Vector3D(-0.5, -0.5, 0.5);
 
             WorldCamera = new PerspectiveCamera(
                 CameraPosition,
-                CameraLook,  //Need to lookat 0.5, 0.5, -0.5 to see the center of the cube.
+                CameraLook,
                 new Vector3D(0, 1, 0), 45);
 
             DirectionalLight localLight = new DirectionalLight(Colors.White, new Vector3D(1, -1, -1));
@@ -68,73 +71,125 @@ namespace SCWorldEdit.Framework
             WorldModelGroup = new Model3DGroup();
 
             WorldModelGroup.Children.Add(localLight);
-
-            /* Not for the real app this is just so we have something to look at for now.*/
-            ScBlock localBlock = new ScBlock(new Point3D(0, 0, 0), 0, 0);
-            ScBlock localBlock2 = new ScBlock(new Point3D(2, 0, 0), 0, 0);
-            ScBlock localBlock3 = new ScBlock(new Point3D(1, 1, 0), 0, 0);
-
-            WorldModelGroup.Children.Add(localBlock.BlockModel);
-            WorldModelGroup.Children.Add(localBlock2.BlockModel);
-            WorldModelGroup.Children.Add(localBlock3.BlockModel);
-
         }
 
-        public void Load(string argFileName)
+        public void Load(string argDirName)
         {
-            FileName = argFileName;
+            byte[] chunksDat;
+            /**/
+            ProjectFilename = argDirName + "\\Project.xml";
+            XDocument localScProject = XDocument.Load(ProjectFilename);
+
+          var projectVersion =  localScProject.Element("Project")?.Attribute("Version").Value;
+            if (projectVersion != null && projectVersion != "1.27")
+            {
+                throw new ProductVersionNotSupportedException();
+            }
+
+            var projectEntitiesXml = localScProject.Elements("Project").Elements("Entities");
+            var entityPlayerXml = projectEntitiesXml.Elements("Entity").Where(scTemp => (string)scTemp.Attribute("Name") == "Player");
+            var playerBodyXml = entityPlayerXml.Elements("Values").Where(scTemp => (string)scTemp.Attribute("Name") == "Body");
+            var bodyPositionXml = playerBodyXml.Elements("Value").Where(scTemp => (string)scTemp.Attribute("Name") == "Position");
+            var positionValue = bodyPositionXml.Attributes("Value").SingleOrDefault().Value;
+
+            Point3D playerPosition = Point3D.Parse(positionValue);
+
+
+            /**/
+            ChunkFilename = argDirName + "\\Chunks.dat";
             ChunkDictionary = new Dictionary<ScChunkPosition, ScChunk>();
 
             /**/
-            using (var fileStream = File.Open(FileName, FileMode.Open, FileAccess.ReadWrite))
+            using (FileStream fileStream = File.Open(ChunkFilename, FileMode.Open, FileAccess.ReadWrite))
             {
-                using (var file = new BinaryReader(fileStream))
+                using (BinaryReader file = new BinaryReader(fileStream))
                 {
-                    List<ScChunkPosition> chunkOffsetDirectory = new List<ScChunkPosition>();
-                    for (int i = 0; i < 65536; ++i)
-                    {
-                        Int32 chunkX = file.ReadInt32();
-                        Int32 chunkZ = file.ReadInt32();
-                        Int32 offset = file.ReadInt32();
-
-                        if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
-                        {
-                            chunkOffsetDirectory.Add(new ScChunkPosition(chunkX, chunkZ, offset));
-                        }
-                    }
-
-                    //TODO: Fill ScWorld class.
-                    foreach (var currentChunkPosition in chunkOffsetDirectory)
-                    {
-                        //Go to the chunk offset
-                        fileStream.Position = currentChunkPosition.Offset;
-
-                        byte[] chunkInfo = file.ReadBytes(66576);
-
-                        ScChunk chunk = new ScChunk(currentChunkPosition,  chunkInfo);
-
-                        AddChunk(currentChunkPosition, chunk);
-                    }
+                    chunksDat = file.ReadBytes((int)fileStream.Length);
                 }
             }
+
+            List<ScChunkPosition> chunkOffsetDirectory = new List<ScChunkPosition>(65537);
+            for (int i = 0; i < 65536; ++i)
+            {
+                //Int32 chunkX = file.ReadInt32(); // 0, 1
+                Int32 chunkX = BitConverter.ToInt32(chunksDat, 0); // 0, 1
+                //Int32 chunkZ = file.ReadInt32(); // 2, 3
+                Int32 chunkZ = BitConverter.ToInt32(chunksDat, 4); // 2, 3
+                //Int32 offset = file.ReadInt32(); // 4, 5
+                Int32 offset = BitConverter.ToInt32(chunksDat, 8); // 4, 5
+
+                if (offset > 0) //If the offset is zero there is not really a chunk there. The game engine will regenerate the chunk, it doesn't need to store it.
+                {
+                    chunkOffsetDirectory.Add(new ScChunkPosition(chunkX, chunkZ, offset));
+
+                    /**/
+                    if (_minX == 0)
+                        _minX = chunkX;
+
+                    if (_minZ == 0)
+                        _minZ = chunkZ;
+                    _minX = Math.Min(chunkX, _minX);
+                    _minZ = Math.Min(chunkZ, _minZ);
+                    _maxX = Math.Max(chunkX, _maxX);
+                    _maxZ = Math.Max(chunkZ, _maxZ);
+                    /**/
+                }
+            }
+
+            //Now that I know how big it will be I can make the chunk map.
+            _worldImage = CreateImage();
+
+            //TODO: Fill ScWorld class.
+            foreach (ScChunkPosition currentChunkPosition in chunkOffsetDirectory)
+            //Parallel.ForEach(chunkOffsetDirectory, (currentChunkPosition)=> 
+            {
+                ImageMapChunk(currentChunkPosition);
+                //Go to the chunk offset
+                //fileStream.Position = currentChunkPosition.Offset;
+                //chunksDat
+                //byte[] chunkInfo = new byte[66576];
+                //Buffer.BlockCopy(chunksDat, currentChunkPosition.Offset, chunkInfo, 0, 66576);
+                //ScChunk chunk = new ScChunk(currentChunkPosition, chunkInfo);
+
+                //ChunkDictionary.Add(currentChunkPosition, chunk);
+            }  // );
+
+
             /**/
 
-            _worldImage = CreateImage();
+        }
+
+        private void ImageMapChunk(ScChunkPosition argChunkPosition)
+        {
+            int backBufferStride = _worldImage.BackBufferStride;
+            int localRange = _maxX * _maxZ * backBufferStride;
+            byte[] worldBytes = new byte[localRange];
+
+            //foreach (var pair in ChunkDictionary)
+            //{
+            //offset = (argY * stride) + (argX * bpp) + colorByte
+            int localByteOffset = (argChunkPosition.ChunkZ * backBufferStride) + (argChunkPosition.ChunkX * _bpp) + 0; //We're just using RED right now.
+            worldBytes[localByteOffset] = 254;
+            worldBytes[localByteOffset + 1] = 254;
+            //}
+
+            _worldImage.WritePixels(new Int32Rect(0, 0, _maxX, _maxZ), worldBytes, backBufferStride, 0, 0);
+
         }
 
         public void AddChunk(ScChunkPosition argChunkPosition, ScChunk chunk)
         {
             ChunkDictionary.Add(argChunkPosition, chunk);
 
-            if (_minX == 0)
-                _minX = chunk.ChunkX;
+            //if (_minX == 0)
+            //    _minX = chunk.ChunkX;
 
-            if (_minY == 0)
-                _minY = chunk.ChunkZ;
-            _minX = Math.Min(chunk.ChunkX, _minX);
-            _minY = Math.Min(chunk.ChunkZ, _minY);
-            _maxX = Math.Max(chunk.ChunkX, _maxX);
-            _maxY = Math.Max(chunk.ChunkZ, _maxY);
+            //if (_minZ == 0)
+            //    _minZ = chunk.ChunkZ;
+            //_minX = Math.Min(chunk.ChunkX, _minX);
+            //_minZ = Math.Min(chunk.ChunkZ, _minZ);
+            //_maxX = Math.Max(chunk.ChunkX, _maxX);
+            //_maxZ = Math.Max(chunk.ChunkZ, _maxZ);
         }
 
         public ScBlock GetBlock(int x, int y, int z)
@@ -144,7 +199,7 @@ namespace SCWorldEdit.Framework
             int chunkX = (x - blockX) / 16;
             int chunkZ = (z - blockZ) / 16;
 
-            var localChunk = ChunkDictionary
+            ScChunk localChunk = ChunkDictionary
                 .Where(localPair =>
                 localPair.Key.ChunkX == chunkX &&
                 localPair.Key.ChunkZ == chunkZ)
@@ -179,12 +234,15 @@ namespace SCWorldEdit.Framework
 
         private WriteableBitmap CreateImage()
         {
-            //TODO: The bitmap should be set to either a percentage of the existing, or add a simple border. 2x is too large now and will only get larger as "real" maps are opened.
-            WriteableBitmap localBitmap = new WriteableBitmap((_maxX * 2) + 1, (_maxY * 2) + 1, 96.0, 96.0, PixelFormats.Bgr24, BitmapPalettes.Halftone256);
+            //The bitmap should be set to either a percentage of the existing, or add a simple border. 2x is too large now and will only get larger as "real" maps are opened.
+            int bitmapWidth = (int)((_maxX * 1.2) + 1);
+            int bitmapHeight = (int)((_maxZ * 1.2) + 1);
+
+            WriteableBitmap localBitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 96.0, 96.0, PixelFormats.Bgr24, BitmapPalettes.Halftone256);
 
             return localBitmap;
 
-            //int localRange = _maxX * _maxY * localBitmap.BackBufferStride;
+            //int localRange = _maxX * _maxZ * localBitmap.BackBufferStride;
             //byte[] _worldBytes = new byte[localRange];
 
             //foreach (var pair in ChunkDictionary)
@@ -195,7 +253,7 @@ namespace SCWorldEdit.Framework
             //    _worldBytes[localByteOffset + 1] = 254;
             //}
 
-            //localBitmap.WritePixels(new Int32Rect(0, 0, _maxX, _maxY), _worldBytes, localBitmap.BackBufferStride, 0, 0);
+            //localBitmap.WritePixels(new Int32Rect(0, 0, _maxX, _maxZ), _worldBytes, localBitmap.BackBufferStride, 0, 0);
 
             //return localBitmap;
         }

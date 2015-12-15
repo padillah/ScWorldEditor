@@ -27,9 +27,8 @@ namespace SCWorldEdit.Framework
 			//Save the three files to the Temp dir
 			ZipWrapper.ExtractZipFile(newFileName, localDirectory.FullName);
 			
-			//Open the "Chunks.dat" file.
-			string chunkFileName = localDirectory.FullName + "\\Chunks.dat";
-            World.Load(chunkFileName);
+			//Open the files.
+            World.Load(localDirectory.FullName);
 
 			//return localWorld;
 		}

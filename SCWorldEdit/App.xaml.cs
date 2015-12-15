@@ -18,7 +18,7 @@ namespace SCWorldEdit
             base.OnStartup(e);
 
             Locator.RegisterSingleton<IDialogService, DialogService>();
-            Locator.RegisterSingleton<IMaterialHandler, MaterialHandler>();
+            Locator.RegisterSingleton<IMaterialHandler, MaterialHandler>(new MaterialHandler());
             
             _mainViewModel = new MainViewModel();
             MainView view = new MainView();
