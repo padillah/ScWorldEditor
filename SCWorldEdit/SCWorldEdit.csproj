@@ -66,6 +66,7 @@
     <Compile Include="Assets\MenuRelayCommand.cs" />
     <Compile Include="Assets\RelayCommand.cs" />
     <Compile Include="Assets\UtilityCode.cs" />
+    <Compile Include="Assets\ZipWrapper.cs" />
     <Compile Include="Framework\IMaterialHandler.cs" />
     <Compile Include="Framework\MaterialHandler.cs" />
     <Compile Include="Framework\ScBlock.cs" />
@@ -123,11 +124,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\SharpZipLib\ICSharpCode.SharpZLib.csproj">
-      <Project>{0e7413ff-eb9e-4714-acf2-be3a6a7b2ffd}</Project>
-      <Name>ICSharpCode.SharpZLib</Name>
+    <ProjectReference Include="..\..\SharpZipLib\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib.csproj">
+      <Project>{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}</Project>
+      <Name>ICSharpCode.SharpZipLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

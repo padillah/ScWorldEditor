@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using ICSharpCode.SharpZipLib;
+using SCWorldEdit.Assets;
 
 //TODO: World should be Image 768x768 (256 * 3)
 

@@ -4,7 +4,7 @@ using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace ICSharpCode.SharpZipLib
+namespace SCWorldEdit.Assets
 {
     public static class ZipWrapper
     {
