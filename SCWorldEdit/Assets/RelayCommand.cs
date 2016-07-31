@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ServiceLocator.Annotations;
 
 namespace SCWorldEdit.Assets
 {
@@ -74,7 +73,6 @@ namespace SCWorldEdit.Assets
 
     }
 
-    [UsedImplicitly]
     public class RelayCommand<T> : ICommand
     {
         public event EventHandler CanExecuteChanged;
@@ -138,7 +136,6 @@ namespace SCWorldEdit.Assets
             return _canExecute == null || _canExecute(argParameter);
         }
 
-        [UsedImplicitly]
         public void OnCanExecuteChanged()
         {
             CanExecuteChanged.Raise(this, EventArgs.Empty);

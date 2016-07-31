@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using DialogServiceLibrary.Service;
 using DialogServiceLibrary.Service.FrameworkDialogs.OpenFile;
-using SCWorldEdit.Annotations;
 using SCWorldEdit.Assets;
 using SCWorldEdit.Framework;
 using ServiceLocator;

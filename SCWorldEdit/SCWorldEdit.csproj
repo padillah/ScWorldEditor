@@ -73,7 +73,6 @@
     <Compile Include="Framework\ScChunk.cs" />
     <Compile Include="Framework\ScChunkPosition.cs" />
     <Compile Include="MainViewModel.cs" />
-    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Framework\ScEngine.cs" />
     <Compile Include="Framework\ScWorld.cs" />
     <Compile Include="UserControls\ScLayer\ScLayerView.xaml.cs">
