@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCWorldEdit", "SCWorldEdit\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.SharpZipLib", "..\SharpZipLib\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib.csproj", "{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLocator", "..\ServiceLocator\ServiceLocator\ServiceLocator.csproj", "{EDCB23D1-4C72-4D3C-B49F-3DA43550B792}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogService", "..\DialogService\DialogService\DialogService.csproj", "{82EFF267-3F43-4AE9-880B-E80CC28C305B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E7413FF-EB9E-4714-ACF2-BE3A6A7B2FFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDCB23D1-4C72-4D3C-B49F-3DA43550B792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDCB23D1-4C72-4D3C-B49F-3DA43550B792}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDCB23D1-4C72-4D3C-B49F-3DA43550B792}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDCB23D1-4C72-4D3C-B49F-3DA43550B792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82EFF267-3F43-4AE9-880B-E80CC28C305B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82EFF267-3F43-4AE9-880B-E80CC28C305B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82EFF267-3F43-4AE9-880B-E80CC28C305B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82EFF267-3F43-4AE9-880B-E80CC28C305B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
